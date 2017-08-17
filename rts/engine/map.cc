@@ -31,6 +31,13 @@ bool RTSMap::find_two_nearby_empty_slots(const std::function<uint16_t(int)>& f, 
     return false;
 }
 
+void RTSMap::find_two_nearby_empty_slots_until_success(const std::function<uint16_t(int)>& f, int *x1, int *y1, int *x2, int *y2, int i) const {
+	while (!find_two_nearby_empty_slots(f, x1, y1, x2, y2))
+	{
+	}
+}
+
+
 bool RTSMap::GenerateImpassable(const std::function<uint16_t(int)>& f, int nImpassable) {
     _map.assign(_m * _n * _level, MapSlot());
     for (int i = 0; i < nImpassable; ++i) {
@@ -106,6 +113,27 @@ bool RTSMap::GenerateTDMaze(const std::function<uint16_t(int)>& f) {
         }
     }
     return true;
+}
+
+bool RTSMap::GenerateKiteMap(const std::function<uint16_t(int)>& f)
+{
+	_m = 20 + f(100);
+    _n = 5;
+    _level = 1;
+	_map.clear();
+    _map.assign(_m * _n * _level, MapSlot());
+
+    find_two_nearby_empty_slots_until_success(f, &x1, &y1, &x2, &y2, i));
+    PlayerMapInfo info1, info2;
+    info1.player_id = 0;
+	info2.player_id = 1;
+    info1.base_coord = Coord(x1, y1);
+    info2.base_coord = Coord(x2, y2);
+    _infos.emplace_back(info1);
+	_infos.emplace_back(info2);
+
+    reset_intermediates();
+    return true;	
 }
 
 bool RTSMap::GenerateMap(const std::function<uint16_t(int)>& f, int nImpassable, int num_player, int init_resource) {

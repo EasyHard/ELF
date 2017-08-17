@@ -35,7 +35,9 @@ custom_enum(UnitType, INVALID_UNITTYPE = -1,
     /* Capture the flag unit type */
     FLAG_BASE = 0, FLAG_ATHLETE, FLAG, NUM_FLAG_UNITTYPE,
     /* Tower defense unit type */
-    TOWER_BASE = 0, TOWER_ATTACKER, TOWER, NUM_TD_UNITTYPE
+    TOWER_BASE = 0, TOWER_ATTACKER, TOWER, NUM_TD_UNITTYPE,
+    /* Kite unit types */
+	KMELEE_ATTACKER = 0, KRANGE_ATTACKER, NUM_KITE_UNITTYPE
     );
 
 custom_enum(UnitAttr, INVALID_UNITATTR = -1, ATTR_NORMAL = 0, ATTR_INVULNERABLE, NUM_UNITATTR);

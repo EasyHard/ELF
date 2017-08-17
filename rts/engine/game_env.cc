@@ -136,6 +136,22 @@ PlayerId GameEnv::CheckBase(UnitType base_type) const{
     return last_player_has_base;
 }
 
+PlayerId GameEnv::CheckLastPlayerHasUnit() const {
+    PlayerId last_player_has_unit = INVALID;
+    for (auto it = _units.begin(); it != _units.end(); ++it) {
+        const Unit *u = it->second.get();
+            if (last_player_has_unit == INVALID) {
+                last_player_has_unit = u->GetPlayerId();
+            } else if (last_player_has_unit != u->GetPlayerId()) {
+                // No winning.
+                last_player_has_unit = INVALID;
+                break;
+            }
+        }
+    }
+    return last_player_has_unit;	
+}
+
 bool GameEnv::FindEmptyPlaceNearby(const PointF &p, int l1_radius, PointF *res_p, PlayerId player_id) const {
     // Find an empty place by simple local grid search.
     const int margin = 2;
@@ -252,6 +268,11 @@ void GameEnv::ComputeFOW() {
 bool GameEnv::GenerateMap(int num_obstacles, int init_resource) {
     return _map->GenerateMap(GetRandomFunc(), num_obstacles, _players.size(), init_resource);
 }
+
+bool GameEnv::GenerateKiteMap() {
+    return _map->GenerateKiteMap(GetRandomFunc());
+}
+
 
 bool GameEnv::GenerateImpassable(int num_obstacles) {
     return _map->GenerateImpassable(GetRandomFunc(), num_obstacles);

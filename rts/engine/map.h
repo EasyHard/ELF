@@ -61,11 +61,13 @@ private:
   void precompute_all_pair_distances();
 
   bool find_two_nearby_empty_slots(const std::function<uint16_t (int)>& f, int *x1, int *y1, int *x2, int *y2, int i) const;
-
+  bool find_two_nearby_empty_slots_until_success(const std::function<uint16_t (int)>& f, int *x1, int *y1, int *x2, int *y2, int i) const;
+  
 public:
   // Load map from a file.
   RTSMap();
   bool GenerateMap(const std::function<uint16_t (int)>& f, int nImpassable, int num_player, int init_resource);
+  bool GenerateKiteMap(const std::function<uint16_t (int)>& f);
   bool GenerateImpassable(const std::function<uint16_t(int)>& f, int nImpassable);
   bool GenerateTDMaze(const std::function<uint16_t(int)>& f);
 

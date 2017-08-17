@@ -22,6 +22,10 @@ custom_enum(FlagState, FLAGSTATE_START = 0, FLAGSTATE_GET_FLAG, FLAGSTATE_ATTACK
     FLAGSTATE_ESCORT_FLAG, FLAGSTATE_PROTECT_FLAG, //FLAGSTATE_ATTACK, FLAGSTATE_MOVE,
     NUM_FLAGSTATE);
 
+custom_enum(KiteState, KITESTATE_START = 0, KITESTATE_ATTACK, KITESTATE_ATTACK_IN_RANGE,
+    NUM_FLAGSTATE);
+
+
 // Some easy macros
 #define _A(...) CmdBPtr(new CmdAttack(INVALID, __VA_ARGS__))
 #define _M(...) CmdBPtr(new CmdMove(INVALID, __VA_ARGS__))
@@ -147,6 +151,7 @@ protected:
     bool store_cmd(const Unit *, CmdBPtr &&cmd, AssignedCmds *m) const;
     bool store_cmd_if_different(const Unit *, CmdBPtr &&cmd, AssignedCmds *m) const;
     void batch_store_cmds(const vector<const Unit *> &subset, const CmdBPtr& cmd, bool preemptive, AssignedCmds *m) const;
+	void batch_store_cmds(const vector<const Unit *> &subset, const CmdBPtr& cmd, AssignedCmds *m) const;
 
     bool act_per_unit(const GameEnv &env, const Unit *u, const int *state, RegionHist *region_hist, string *state_string, AssignedCmds *assigned_cmds);
 

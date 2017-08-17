@@ -116,6 +116,7 @@ public:
 
     // Generate a RTSMap given number of obstacles.
     bool GenerateMap(int num_obstacles, int init_resource);
+	bool GenerateKiteMap();
     bool GenerateImpassable(int num_obstacles);
 
     // Generate a maze used by Tower Defense.
@@ -172,6 +173,9 @@ public:
 
     // Check if one player's base has been destroyed.
     PlayerId CheckBase(UnitType base_type) const;
+
+    // Check if one player's units have been destroyed.
+    PlayerId CheckLastPlayerHasUnit() const;
 
     // Getter and setter for winner_id, termination.
     void SetWinnerId(PlayerId winner_id) { _winner_id = winner_id; }
