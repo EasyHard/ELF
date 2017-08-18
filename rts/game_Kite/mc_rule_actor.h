@@ -16,7 +16,7 @@ class MCRuleActor : public RuleActor {
 public:
     MCRuleActor(){ }
     // Act by a state array, used by MiniRTS
-    bool ActByState(const GameEnv &env, const vector<int>& state, string *state_string, AssignedCmds *assigned_cmds);
+    bool ActSimpleAI(const GameEnv &env, string *state_string, AssignedCmds *assigned_cmds);
     // Act by a state array for each unit, used by MiniRTS
     bool ActByState2(const GameEnv &env, const vector<int>& state, string *state_string, AssignedCmds *assigned_cmds);
     // Act by a state array for each region, used by MiniRTS

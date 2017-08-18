@@ -20,7 +20,7 @@ int GameDef::GetNumUnitType() {
 }
 
 int GameDef::GetNumAction() {
-    return NUM_AISTATE;
+    return NUM_KITESTATE;
 }
 
 bool GameDef::IsUnitTypeBuilding(UnitType t) const{

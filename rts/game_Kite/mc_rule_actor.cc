@@ -25,7 +25,7 @@ bool MCRuleActor::ActByState2(const GameEnv &env, const vector<int>& state, stri
     return true;
 }
 
-bool MCRuleActor::ActByState(const GameEnv &env, const vector<int>& state, string *state_string, AssignedCmds *assigned_cmds) {
+bool MCRuleActor::ActSimpleAI(const GameEnv &env, string *state_string, AssignedCmds *assigned_cmds) {
     // Each unit can only have one command. So we have this map.
     // cout << "Enter ActByState" << endl << flush;
     assigned_cmds->clear();
@@ -35,36 +35,63 @@ bool MCRuleActor::ActByState(const GameEnv &env, const vector<int>& state, strin
     const auto& enemy_troops = _preload.EnemyTroops();
     const auto& enemy_troops_in_range = _preload.EnemyTroopsInRange();
     const auto& all_my_troops = _preload.AllMyTroops();
-
-    if (state[KITESTATE_ATTACK_IN_RANGE]) {
-      *state_string = "Attack enemy in range..NOOP";
-      if (! enemy_troops_in_range.empty()) {
-        *state_string = "Attack enemy in range..Success";
-        auto cmd = _A(enemy_troops_in_range[0]->GetId());
-        batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, assigned_cmds);
-        batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, assigned_cmds);
-      }
-    }
 	
-    if (state[KITESTATE_ATTACK]) {
-        *state_string = "Attack..Normal";
-        // Then let's scout out the map.        
+	if (! enemy_troops_in_range.empty()) {
+	*state_string = "Attack enemy in range..Success";
+	auto cmd = _A(enemy_troops_in_range[0]->GetId());
+	batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, assigned_cmds);
+	batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, assigned_cmds);
+	}
+	else
+	{
 		if (! enemy_troops.empty())
 		{
 	        auto cmd = _A(enemy_troops[0]->GetId());
 	        batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, false, assigned_cmds);
 	        batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, false, assigned_cmds);
 		}
-    }
+	}
 
     return true;
 }
 
+bool MCRuleActor::ActWithUnit(const GameEnv &env, const KiteState state, string *state_string, AssignedCmds *assigned_cmds) {
+    // Each unit can only have one command. So we have this map.
+    // cout << "Enter ActByState" << endl << flush;
+    assigned_cmds->clear();
+
+	int ACTION = 0;
+	float phi = 0;
+	if (state == KITESTATE_START) {
+		return;
+	} else if (state == KITESTATE_ATTACK) {
+		ACTION = ATTACKACTION;
+	} else if (state >= KITESTATE_MOVE1 && state <= KITESTATE_MOVE16)
+	{
+		ACTION = MOVEACTION;
+		phi = 2*3.14*(state - KITESTATE_MOVE1)/16
+	}
+
+	for (auto it : env.GetUnits())
+	{
+		if (it->second.GetPlayerId() == _player_id) {
+			// ATTACK
+			if (ACTION == ATTACKACTION) {
+				auto cmd = _A(enemy_troops_in_range[0]->GetId());
+				store_cmd(it->second, cmd, assigned_cmds);
+			} else if (ACTION == MOVEACTION) {
+				auto target = it->second->GetPointF().Angle(phi);
+				auto cmd = _M(it->second, target);
+				store_cmd(it->second, cmd, assigned_cmds);
+			}
+		}
+	}
+
+    return true;
+}
+
+
 bool MCRuleActor::GetActSimpleState(vector<int>* state) {
-    vector<int> &_state = *state;
-	_state[KITESTATE_ATTACK_IN_RANGE] = 1;
-	_state[KITESTATE_ATTACK] = 1;
-	
     return true;
 }
 

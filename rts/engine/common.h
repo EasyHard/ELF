@@ -94,6 +94,7 @@ struct PointF {
     PointF Right() const { PointF c(*this); c.x += 1.0; return c; }
     PointF Up() const { PointF c(*this); c.y -= 1.0; return c; }
     PointF Down() const { PointF c(*this); c.y += 1.0; return c; }
+	PointF Angle(float pi) const { PointF c(*this); c.x += 1.0 * cos(pi); c.y += 1.0 * sin(pi); return c; }
 
     PointF LT() const { PointF c(*this); c.x -= 1.0; c.y -= 1.0; return c; }
     PointF LB() const { PointF c(*this); c.x -= 1.0; c.y += 1.0; return c; }
