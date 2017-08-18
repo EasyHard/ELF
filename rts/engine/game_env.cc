@@ -137,19 +137,18 @@ PlayerId GameEnv::CheckBase(UnitType base_type) const{
 }
 
 PlayerId GameEnv::CheckLastPlayerHasUnit() const {
-    PlayerId last_player_has_unit = INVALID;
-    for (auto it = _units.begin(); it != _units.end(); ++it) {
-        const Unit *u = it->second.get();
-            if (last_player_has_unit == INVALID) {
-                last_player_has_unit = u->GetPlayerId();
-            } else if (last_player_has_unit != u->GetPlayerId()) {
-                // No winning.
-                last_player_has_unit = INVALID;
-                break;
-            }
-        }
+  PlayerId last_player_has_unit = INVALID;
+  for (auto it = _units.begin(); it != _units.end(); ++it) {
+    const Unit *u = it->second.get();
+    if (last_player_has_unit == INVALID) {
+      last_player_has_unit = u->GetPlayerId();
+    } else if (last_player_has_unit != u->GetPlayerId()) {
+      // No winning.
+      last_player_has_unit = INVALID;
+      break;
     }
-    return last_player_has_unit;	
+  }
+  return last_player_has_unit;	
 }
 
 bool GameEnv::FindEmptyPlaceNearby(const PointF &p, int l1_radius, PointF *res_p, PlayerId player_id) const {

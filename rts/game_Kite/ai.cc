@@ -20,7 +20,6 @@ void AIBase::save_structured_state(const GameEnv &env, Data *data) const {
 
     const int n_type = env.GetGameDef().GetNumUnitType();
     const int n_additional = 3;
-    const int resource_grid = 50;
     const int res_pt = NUM_RES_SLOT;
     const int total_channel = n_type + n_additional;
 
@@ -56,18 +55,9 @@ void AIBase::save_structured_state(const GameEnv &env, Data *data) const {
         _F(t, x, y) = 1.0;
         _F(n_type, x, y) = u.GetPlayerId() + 1;
         _F(n_type + 1, x, y) = hp_level;
-		_F(n_type + 2, x, y) = u.GetProperty().CD(CD_ATTACK).Passed(game->tick) ? 1 : -1;
-       }
+        _F(n_type + 2, x, y) = u.GetProperty().CD(CD_ATTACK).Passed(game->tick) ? 1 : -1;
 
         ++ unit_iter;
-    }
-
-    for (int i = 0; i < env.GetNumOfPlayers(); ++i) {
-        // Omit player signal from other player's perspective.
-        if (visibility_check != INVALID && visibility_check != i) continue;
-        const auto &player = env.GetPlayer(i);
-        quantized_r[i] = min(int(player.GetResource() / resource_grid), res_pt - 1);
-        game->res[i * res_pt + quantized_r[i]] = 1.0;
     }
 
     game->last_r = 0.0;
@@ -81,17 +71,16 @@ void AIBase::save_structured_state(const GameEnv &env, Data *data) const {
 
 
 bool TrainedAI2::on_act(const GameEnv &env) {
-    // Get the current action from the queue.
-	int h = 0;
-	h = gs.a;
-    const GameState& gs = _ai_comm->info().data.newest();
-	if (_receiver->GetUseCmdComment()) {
-		string s = to_string(h);
-		SendComment(s);
-	}
-	
-	return gather_decide(env, [&](const GameEnv &e, string *s, AssignedCmds *assigned_cmds) {
-        return _mc_rule_actor.ActWithUnit(e, h, s, assigned_cmds);
+  // Get the current action from the queue.
+  int h = 0;
+  const GameState& gs = _ai_comm->info().data.newest();
+  h = gs.a;
+  if (_receiver->GetUseCmdComment()) {
+    string s = to_string(h);
+    SendComment(s);
+  }
+  return gather_decide(env, [&](const GameEnv &e, string *s, AssignedCmds *assigned_cmds) {
+      return _mc_rule_actor.ActWithUnit(e, (KiteState)h, s, assigned_cmds);
     });
 }
 
@@ -107,6 +96,6 @@ bool HitAndRunAI::on_act(const GameEnv &env) {
     std::fill (_state.begin(), _state.end(), 0);
     return gather_decide(env, [&](const GameEnv &e, string *s, AssignedCmds *assigned_cmds) {
         _mc_rule_actor.GetActHitAndRunState(&_state);
-        return _mc_rule_actor.ActByState(e, _state, s, assigned_cmds);
+        return _mc_rule_actor.ActSimpleAI(e, s, assigned_cmds);
     });
 }

@@ -61,8 +61,7 @@ private:
   void precompute_all_pair_distances();
 
   bool find_two_nearby_empty_slots(const std::function<uint16_t (int)>& f, int *x1, int *y1, int *x2, int *y2, int i) const;
-  bool find_two_nearby_empty_slots_until_success(const std::function<uint16_t (int)>& f, int *x1, int *y1, int *x2, int *y2, int i) const;
-  
+
 public:
   // Load map from a file.
   RTSMap();

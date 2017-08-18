@@ -22,12 +22,12 @@ custom_enum(FlagState, FLAGSTATE_START = 0, FLAGSTATE_GET_FLAG, FLAGSTATE_ATTACK
     FLAGSTATE_ESCORT_FLAG, FLAGSTATE_PROTECT_FLAG, //FLAGSTATE_ATTACK, FLAGSTATE_MOVE,
     NUM_FLAGSTATE);
 
-custom_enum(KiteState, KITESTATE_START = 0, 
-	KITESTATE_MOVE1, KITESTATE_MOVE2, KITESTATE_MOVE3, KITESTATE_MOVE4,
-	KITESTATE_MOVE5, KITESTATE_MOVE6, KITESTATE_MOVE7, KITESTATE_MOVE8,
-	KITESTATE_MOVE9, KITESTATE_MOVE10, KITESTATE_MOVE11, KITESTATE_MOVE12,
-	KITESTATE_MOVE13, KITESTATE_MOVE14, KITESTATE_MOVE15, KITESTATE_MOVE16,
-	KITESTATE_ATTACK,
+custom_enum(KiteState, KITESTATE_START = 0,
+        KITESTATE_MOVE1, KITESTATE_MOVE2, KITESTATE_MOVE3, KITESTATE_MOVE4,
+        KITESTATE_MOVE5, KITESTATE_MOVE6, KITESTATE_MOVE7, KITESTATE_MOVE8,
+        KITESTATE_MOVE9, KITESTATE_MOVE10, KITESTATE_MOVE11, KITESTATE_MOVE12,
+        KITESTATE_MOVE13, KITESTATE_MOVE14, KITESTATE_MOVE15, KITESTATE_MOVE16,
+        KITESTATE_ATTACK,
     NUM_KITESTATE);
 
 #define MOVEACTION 123
@@ -159,7 +159,6 @@ protected:
     bool store_cmd(const Unit *, CmdBPtr &&cmd, AssignedCmds *m) const;
     bool store_cmd_if_different(const Unit *, CmdBPtr &&cmd, AssignedCmds *m) const;
     void batch_store_cmds(const vector<const Unit *> &subset, const CmdBPtr& cmd, bool preemptive, AssignedCmds *m) const;
-	void batch_store_cmds(const vector<const Unit *> &subset, const CmdBPtr& cmd, AssignedCmds *m) const;
 
     bool act_per_unit(const GameEnv &env, const Unit *u, const int *state, RegionHist *region_hist, string *state_string, AssignedCmds *assigned_cmds);
 

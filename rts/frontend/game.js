@@ -22,6 +22,7 @@ var player_colors = ['blue', 'red', 'yellow']
 var unit_names_minirts = ["RESOURCE", "WORKER", "MELEE_ATTACKER", "RANGE_ATTACKER", "BARRACKS", "BASE"];
 var unit_names_flag = ["FLAG_BASE", "FLAG_ATHLETE", "FLAG"];
 var unit_names_td = ["BASE", "WORKER", "RANGE_ATTACKER"];
+var unit_names_kite = ["KRANGE_ATTACKER", "KMELEE_ATTACKER"];
 var x_down = null;
 var y_down = null;
 var x_curr;
@@ -370,7 +371,25 @@ sprites["RANGE_ATTACKER"] = load_sprites({
     "_sizes" : [32, 32]
 });
 
+sprites["KRANGE_ATTACKER"] = load_sprites({
+    "up" : [myrange(15, 22), [0]],
+    "down": [myrange(15, 22), [1]],
+    "left": [[16], myrange(2, 9)],
+    "right": [[15], myrange(2, 9)],
+    "_file" : "imgs/tiles.png",
+    "_sizes" : [32, 32]
+});
+
 sprites["MELEE_ATTACKER"] = load_sprites({
+    "up" : [myrange(15, 22), [9]],
+    "down": [myrange(15, 22), [10]],
+    "left": [[20], myrange(2, 9)],
+    "right": [[21], myrange(2, 9)],
+    "_file" : "imgs/tiles.png",
+    "_sizes" : [32, 32]
+});
+
+sprites["KMELEE_ATTACKER"] = load_sprites({
     "up" : [myrange(15, 22), [9]],
     "down": [myrange(15, 22), [10]],
     "left": [[20], myrange(2, 9)],
@@ -503,6 +522,7 @@ var main = function () {
   dealer.onmessage = function (message) {
     var s = message.data;
     var game = JSON.parse(s);
+    console.log(game);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     render(game);
   };

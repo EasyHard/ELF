@@ -21,6 +21,7 @@ public:
     bool ActByState2(const GameEnv &env, const vector<int>& state, string *state_string, AssignedCmds *assigned_cmds);
     // Act by a state array for each region, used by MiniRTS
     //bool ActByRegionalState(const GameEnv &env, const Reply &reply, string *state_string, AssignedCmds *assigned_cmds);
+    bool ActWithUnit(const GameEnv &env, const KiteState state, string *state_string, AssignedCmds *assigned_cmds);
 
     // Determine state array for SimpleAI
     bool GetActSimpleState(vector<int>* state);

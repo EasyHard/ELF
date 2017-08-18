@@ -25,7 +25,7 @@ bool MCRuleActor::ActByState2(const GameEnv &env, const vector<int>& state, stri
     return true;
 }
 
-bool MCRuleActor::ActSimpleAI(const GameEnv &env, string *state_string, AssignedCmds *assigned_cmds) {
+bool MCRuleActor::ActSimpleAI(const GameEnv &, string *state_string, AssignedCmds *assigned_cmds) {
     // Each unit can only have one command. So we have this map.
     // cout << "Enter ActByState" << endl << flush;
     assigned_cmds->clear();
@@ -34,65 +34,74 @@ bool MCRuleActor::ActSimpleAI(const GameEnv &env, string *state_string, Assigned
 
     const auto& enemy_troops = _preload.EnemyTroops();
     const auto& enemy_troops_in_range = _preload.EnemyTroopsInRange();
-    const auto& all_my_troops = _preload.AllMyTroops();
-	
-	if (! enemy_troops_in_range.empty()) {
-	*state_string = "Attack enemy in range..Success";
-	auto cmd = _A(enemy_troops_in_range[0]->GetId());
-	batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, assigned_cmds);
-	batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, assigned_cmds);
-	}
-	else
-	{
-		if (! enemy_troops.empty())
-		{
-	        auto cmd = _A(enemy_troops[0]->GetId());
-	        batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, false, assigned_cmds);
-	        batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, false, assigned_cmds);
-		}
-	}
+
+    if (! enemy_troops_in_range.empty()) {
+      *state_string = "Attack enemy in range..Success";
+      auto cmd = _A(enemy_troops_in_range[0]->GetId());
+      batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, false, assigned_cmds);
+      batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, false, assigned_cmds);
+    } else {
+      if (! enemy_troops.empty())
+        {
+          UnitId id = 0;
+          for (auto& it : enemy_troops) {
+            for (auto& it2: it) {
+              id = it2->GetId();
+              break;
+            }
+          }
+          auto cmd = _A(id);
+          batch_store_cmds(my_troops[KMELEE_ATTACKER], cmd, false, assigned_cmds);
+          batch_store_cmds(my_troops[KRANGE_ATTACKER], cmd, false, assigned_cmds);
+        }
+    }
 
     return true;
 }
 
-bool MCRuleActor::ActWithUnit(const GameEnv &env, const KiteState state, string *state_string, AssignedCmds *assigned_cmds) {
+bool MCRuleActor::ActWithUnit(const GameEnv &env, const KiteState state, string *
+                              , AssignedCmds *assigned_cmds) {
     // Each unit can only have one command. So we have this map.
-    // cout << "Enter ActByState" << endl << flush;
     assigned_cmds->clear();
+    const auto& enemy_troops_in_range = _preload.EnemyTroopsInRange();
 
-	int ACTION = 0;
-	float phi = 0;
-	if (state == KITESTATE_START) {
-		return;
-	} else if (state == KITESTATE_ATTACK) {
-		ACTION = ATTACKACTION;
-	} else if (state >= KITESTATE_MOVE1 && state <= KITESTATE_MOVE16)
-	{
-		ACTION = MOVEACTION;
-		phi = 2*3.14*(state - KITESTATE_MOVE1)/16
-	}
+    int ACTION = 0;
+    float phi = 0;
+    if (state == KITESTATE_START) {
+      return true;
+    } else if (state == KITESTATE_ATTACK) {
+      ACTION = ATTACKACTION;
+    } else if (state >= KITESTATE_MOVE1 && state <= KITESTATE_MOVE16)
+      {
+        ACTION = MOVEACTION;
+        phi = 2*3.14*(state - KITESTATE_MOVE1)/16;
+      }
 
-	for (auto it : env.GetUnits())
-	{
-		if (it->second.GetPlayerId() == _player_id) {
-			// ATTACK
-			if (ACTION == ATTACKACTION) {
-				auto cmd = _A(enemy_troops_in_range[0]->GetId());
-				store_cmd(it->second, cmd, assigned_cmds);
-			} else if (ACTION == MOVEACTION) {
-				auto target = it->second->GetPointF().Angle(phi);
-				auto cmd = _M(it->second, target);
-				store_cmd(it->second, cmd, assigned_cmds);
-			}
-		}
-	}
+    for (auto& it : env.GetUnits())
+      {
+        if (it.second->GetPlayerId() == _player_id) {
+          // ATTACK
+          if (ACTION == ATTACKACTION) {
+            auto cmd = _A(enemy_troops_in_range[0]->GetId());
+            store_cmd(it.second.get(), cmd->clone(), assigned_cmds);
+          } else if (ACTION == MOVEACTION) {
+            PointF target = it.second->GetPointF().Angle(phi);
+            auto cmd = _M(target);
+            store_cmd(it.second.get(), cmd->clone(), assigned_cmds);
+          }
+        }
+      }
 
     return true;
 }
 
 
-bool MCRuleActor::GetActSimpleState(vector<int>* state) {
+bool MCRuleActor::GetActSimpleState(vector<int>* ) {
     return true;
+}
+
+bool MCRuleActor::GetActHitAndRunState(vector<int>* ) {
+  return true;
 }
 
 bool MCRuleActor::ActWithMap(const GameEnv &env, const vector<vector<vector<int>>>& action_map, string *state_string, AssignedCmds *assigned_cmds) {

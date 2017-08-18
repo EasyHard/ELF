@@ -159,11 +159,6 @@ bool RuleActor::store_cmd(const Unit *u, CmdBPtr&& cmd, AssignedCmds *m) const {
             const CmdAttack *curr_cmd_att = dynamic_cast<const CmdAttack *>(curr_cmd);
             const CmdAttack *cmd_att = dynamic_cast<const CmdAttack *>(cmd.get());
             if (curr_cmd_att->target() == cmd_att->target()) return false;
-			else 
-			{
-				curr_cmd_att->SetTargetUnitId(cmd_att->target());
-				return true;
-			}
         }
     }
 
@@ -172,9 +167,14 @@ bool RuleActor::store_cmd(const Unit *u, CmdBPtr&& cmd, AssignedCmds *m) const {
 }
 
 void RuleActor::batch_store_cmds(const vector<const Unit *> &subset,
-        const CmdBPtr& cmd, AssignedCmds *m) const {
+                                 const CmdBPtr& cmd, bool preemptive, AssignedCmds *m) const {
     for (const Unit *u : subset) {
-    	store_cmd(u, cmd->clone(), m);
+      const CmdDurative *curr_cmd = GetCurrCmd(*_receiver, *u);
+      if (curr_cmd == nullptr || (preemptive && curr_cmd->type() != cmd->type()) ) {
+        store_cmd(u, cmd->clone(), m);
+      }
+
+      store_cmd(u, cmd->clone(), m);
     }
 }
 
